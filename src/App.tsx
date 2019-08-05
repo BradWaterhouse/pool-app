@@ -20,7 +20,7 @@ export default class App extends Component<IProps, IState> {
 
         this.handleAddingPlayer = this.handleAddingPlayer.bind(this)
         this.getPlayersName = this.getPlayersName.bind(this)
-        this.reduceLife = this.reduceLife.bind(this)
+        this.removePlayer = this.removePlayer.bind(this)
     }
 
     public getPlayersName (name) {
@@ -35,23 +35,27 @@ export default class App extends Component<IProps, IState> {
         this.setState({name: ''})
     };
 
-    public reduceLife(id): void {
-        const red = 'lol'
-    };
+    public removePlayer(id) {
+        // let state = this.state.players
+        // const index = state.indexOf(id);
+        // if (index > -1) {
+        //     const players = state.splice(index, 1);
+        //     this.setState({players})
+        // }
+    }
 
     public showAllPlayers(player) {
         return <ScrollView>
                 <View style={{ flexDirection: 'row', alignContent: 'center', justifyContent: 'center', paddingBottom: 6, flex: 1}}>
-                    <View style={{ flex: 1, alignSelf: 'stretch' }} />
                     <Text style={{fontSize: 16}}>{player.name}</Text>
+                    <View style={{ width: 40, alignContent: 'left'}} />
+                    <Text style={{fontSize: 16}}>{player.id}</Text>
                     <View style={{ flex: 1, alignSelf: 'stretch' }} />
-                    <Text style={{fontSize: 16}}>{player.lives}</Text>
-                    <View style={{ flex: 1, alignSelf: 'stretch' }} />
-                    <Text onPress={this.reduceLife} style = {{ color: '#ff0300' }}>- life</Text>
-                    <View style={{flex: 1, alignSelf: 'stretch' }} />
-                    <Text onPress={this.reduceLife} style = {{ color: '#70ff4a' }}>+ life</Text>
-                    <View style={{flex: 1, alignSelf: 'stretch' }} />
-                    <Text onPress={this.reduceLife(player.id)} style = {{ color: '#ffd552' }}>Remove player</Text>
+                    <Text onPress={this.removePlayer(player)} style = {{ color: '#ff0300' }}>- life</Text>
+                    <View style={{ width: 40, alignContent: 'left' }} />
+                    <Text onPress={this.removePlayer(player)} style = {{ color: '#70ff4a' }}>+ life</Text>
+                    <View style={{ width: 40, alignContent: 'left'}} />
+                    <Text onPress={this.removePlayer(player)} style = {{ color: '#ffd552' }}>Remove player</Text>
                 </View>
 
         </ScrollView>
@@ -70,7 +74,7 @@ export default class App extends Component<IProps, IState> {
                     style={styles.input}
                 />
                 <Button title={'add player'} onPress={this.handleAddingPlayer}/>
-                <ScrollView style={{paddingTop: 10}}>
+                <ScrollView style={{paddingTop: 10, alignSelf: 'stretch', alignContent: 'center', paddingRight: 5, paddingLeft: 5}}>
                     {
                         this.state.players.map((lol, key) => { // This will render a row for each data element.
                             return this.showAllPlayers(lol);
@@ -97,8 +101,8 @@ const styles = StyleSheet.create({
   },
   container: {
       alignItems: 'center',
-      backgroundColor: '#1560ff',
-      paddingTop:50,
+      backgroundColor: '#ffffff',
+      paddingTop:55,
   },
   heading: {
     alignItems: 'center',
