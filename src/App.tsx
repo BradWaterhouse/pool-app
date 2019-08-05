@@ -37,12 +37,11 @@ export default class App extends Component<IProps, IState> {
     };
 
     public removePlayer(id): void {
-        const state = this.state.players;
-        const index = state.indexOf(id);
-        if (index > -1) {
-            const players = state.splice(index, 1);
-            this.setState({players: [...players]})
-        }
+        const data = this.state.players.filter(player => {
+            return player.id !== id
+        });
+
+        this.setState({players: data })
     }
 
     public showAllPlayers(player) {
