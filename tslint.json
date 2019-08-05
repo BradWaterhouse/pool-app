@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-react",
+    "tslint-config-prettier"
+  ],
+  "lib": [
+    "es5",
+    "es6",
+    "esnext"
+  ]
+}
