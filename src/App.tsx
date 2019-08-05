@@ -28,34 +28,35 @@ export default class App extends Component<IProps, IState> {
     }
 
     public handleAddingPlayer(): void {
-        const player = {'name': this.state.name, 'lives': 3, id: 1}
+        const players = this.state.players;
+        const player = {'name': this.state.name, 'lives': 3, id: players.length};
         this.setState({
-            players: [...this.state.players, player]
+            players: [...players, player]
         });
         this.setState({name: ''})
     };
 
-    public removePlayer(id) {
-        // let state = this.state.players
-        // const index = state.indexOf(id);
-        // if (index > -1) {
-        //     const players = state.splice(index, 1);
-        //     this.setState({players})
-        // }
+    public removePlayer(id): void {
+        const state = this.state.players;
+        const index = state.indexOf(id);
+        if (index > -1) {
+            const players = state.splice(index, 1);
+            this.setState({players: [...players]})
+        }
     }
 
     public showAllPlayers(player) {
         return <ScrollView>
                 <View style={{ flexDirection: 'row', alignContent: 'center', justifyContent: 'center', paddingBottom: 6, flex: 1}}>
                     <Text style={{fontSize: 16}}>{player.name}</Text>
-                    <View style={{ width: 40, alignContent: 'left'}} />
+                    <View style={ styles.row } />
                     <Text style={{fontSize: 16}}>{player.id}</Text>
                     <View style={{ flex: 1, alignSelf: 'stretch' }} />
-                    <Text onPress={this.removePlayer(player)} style = {{ color: '#ff0300' }}>- life</Text>
-                    <View style={{ width: 40, alignContent: 'left' }} />
-                    <Text onPress={this.removePlayer(player)} style = {{ color: '#70ff4a' }}>+ life</Text>
-                    <View style={{ width: 40, alignContent: 'left'}} />
-                    <Text onPress={this.removePlayer(player)} style = {{ color: '#ffd552' }}>Remove player</Text>
+                    <Text onPress={this.removePlayer(player.id)} style = {{ color: '#ff0300' }}>- life</Text>
+                    <View style={ styles.row } />
+                    <Text onPress={this.removePlayer(player.id)} style = {{ color: '#70ff4a' }}>+ life</Text>
+                    <View style={styles.row} />
+                    <Text onPress={this.removePlayer(player.id)} style = {{ color: '#ffd552' }}>Remove player</Text>
                 </View>
 
         </ScrollView>
@@ -65,7 +66,7 @@ export default class App extends Component<IProps, IState> {
         return (
             <View style={styles.container}>
                 <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34}}>
-                    Blidworth Killer
+                    Blidworth pool
                 </Text>
                 <TextInput
                     onChangeText={(e) => this.getPlayersName(e)}
@@ -73,15 +74,15 @@ export default class App extends Component<IProps, IState> {
                     placeholder={'Username'}
                     style={styles.input}
                 />
-                <Button title={'add player'} onPress={this.handleAddingPlayer}/>
+                <Text style={styles.button} onPress={this.handleAddingPlayer}>add player</Text>
                 <ScrollView style={{paddingTop: 10, alignSelf: 'stretch', alignContent: 'center', paddingRight: 5, paddingLeft: 5}}>
                     {
-                        this.state.players.map((lol, key) => { // This will render a row for each data element.
+                        this.state.players.map((lol, key) => {
                             return this.showAllPlayers(lol);
                         })
                     }
                 </ScrollView>
-            </View>
+                </View>
         );
     }
 }
@@ -90,14 +91,15 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: 'black',
     borderColor: 'white',
-    borderRadius: 12,
+    borderRadius: 5,
     borderWidth: 1,
     color: 'white',
-    fontSize: 24,
+    fontSize: 12,
     fontWeight: 'bold',
     overflow: 'hidden',
-    paddingBottom: 10,
-    textAlign:'center'
+      padding: 8,
+    textAlign:'center',
+      alignContent:'center'
   },
   container: {
       alignItems: 'center',
@@ -109,11 +111,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 10
   },
-  input: {
+   input: {
     borderColor: 'black',
     borderWidth: 1,
     marginBottom: 10,
-    padding: 10,
+       borderRadius: 5,
+    padding: 12,
     width: 200,
-  }
+    },
+  row: {
+    width: 40,
+    },
 });
