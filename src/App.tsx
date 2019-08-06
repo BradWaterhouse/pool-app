@@ -38,8 +38,8 @@ export default class App extends Component<IProps, IState> {
         this.setState({name: ''})
     };
 
-    public removePlayer(): void {
-        const data = this.state.players.filter(player => player.id !== 3);
+    public removePlayer(event, id): void {
+        const data = this.state.players.filter(player => player.id !== id);
 
         this.setState({players: data})
     }
@@ -49,13 +49,13 @@ export default class App extends Component<IProps, IState> {
             <View style={{ flexDirection: 'row', alignContent: 'center', justifyContent: 'center', paddingBottom: 6, flex: 1}}>
                 <Text style={{fontSize: 16}}>{player.name}</Text>
                 <View style={ styles.row } />
-                <Text style={{fontSize: 16}}>{player.id}</Text>
+                <Text style={{fontSize: 16}}>{player.lives}</Text>
                 <View style={{ flex: 1, alignSelf: 'stretch' }} />
                 <Text onPress={this.removePlayer} style = {{ color: '#ff0300' }}>- life</Text>
                 <View style={ styles.row } />
                 <Text onPress={this.removePlayer} style = {{ color: '#70ff4a' }}>+ life</Text>
                 <View style={styles.row} />
-                <Text onPress={this.removePlayer} style = {{ color: '#ffd552' }}>Remove player</Text>
+                <Text onPress={(e) => {this.removePlayer(e, player.id)}} style = {{ color: '#ffd552' }}>Remove player</Text>
             </View>
 
         </ScrollView>
