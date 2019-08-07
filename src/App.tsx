@@ -23,6 +23,7 @@ export default class App extends Component<IProps, IState> {
         this.handleAddingPlayer = this.handleAddingPlayer.bind(this);
         this.getPlayersName = this.getPlayersName.bind(this);
         this.removePlayer = this.removePlayer.bind(this);
+        this.removeLife = this.removeLife.bind(this);
     }
 
     public getPlayersName (name) {
@@ -33,15 +34,24 @@ export default class App extends Component<IProps, IState> {
         const players = this.state.players;
         const index = this.state.index;
 
-        const player = {'name': this.state.name, 'lives': 3, id: index};
-        this.setState({players: [...players, player], index: index + 1});
-        this.setState({name: ''})
+        const player = {name: this.state.name, lives: 3, id: index};
+        this.setState({players: [...players, player], index: index + 1, name: ''});
     };
 
     public removePlayer(event, id): void {
         const data = this.state.players.filter(player => player.id !== id);
 
         this.setState({players: data})
+    }
+
+    public removeLife(event, id): void {
+        const player = this.state.players[id];
+        player.lives = player.lives - 1;
+        this.setState({players: {
+                ...this.state.players,
+                [this.state.players[id]]: {...player}
+    }
+    })
     }
 
     public showAllPlayers(player) {
@@ -51,7 +61,7 @@ export default class App extends Component<IProps, IState> {
                 <View style={ styles.row } />
                 <Text style={{fontSize: 16}}>{player.lives}</Text>
                 <View style={{ flex: 1, alignSelf: 'stretch' }} />
-                <Text onPress={this.removePlayer} style = {{ color: '#ff0300' }}>- life</Text>
+                <Text onPress={(e) => {this.removeLife(e, player.id)}} style = {{ color: '#ff0300' }}>- life</Text>
                 <View style={ styles.row } />
                 <Text onPress={this.removePlayer} style = {{ color: '#70ff4a' }}>+ life</Text>
                 <View style={styles.row} />
@@ -64,7 +74,7 @@ export default class App extends Component<IProps, IState> {
     public render() {
         return (
             <View style={styles.container}>
-                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34}}>Demo app</Text>
+                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34}}>Blidworth Killer</Text>
                 <TextInput onChangeText={(e) => this.getPlayersName(e)} value={this.state.name} placeholder={'Username'} style={styles.input}/>
 
                 <Text style={styles.button} onPress={this.handleAddingPlayer}>add player</Text>
