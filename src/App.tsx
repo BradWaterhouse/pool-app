@@ -85,7 +85,7 @@ export default class App extends Component<IProps, IState> {
     public render() {
         return (
             <View style={styles.container}>
-                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34, color: '#EEF5DB'}}>Pool App</Text>
+                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34, color: '#EEF5DB'}}>Killer</Text>
                 <TextInput onChangeText={(e) => this.getPlayersName(e)} value={this.state.name} placeholder={'Username'} style={styles.input}/>
 
                 <Text style={styles.button} onPress={this.handleAddingPlayer}>add player</Text>

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Elliot J. Reed",
-    "slug": "elliotjreed",
+    "name": "Killer Pool App",
+    "slug": "killerpoolapp",
     "privacy": "public",
     "sdkVersion": "33.0.0",
     "platforms": [
@@ -21,7 +21,7 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/*"
     ],
     "ios": {
       "supportsTablet": true
