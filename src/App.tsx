@@ -45,9 +45,7 @@ export default class App extends Component<IProps, IState> {
 
     public addLife(event, id): void {
         const newState = Object.assign([], this.state.players);
-
         const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
-
         const player = newState[indexOfPlayer];
 
         player.lives = player.lives + 1;
