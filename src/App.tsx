@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Component } from 'react';
-import {Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 interface IState {
     players?: any[],
@@ -33,39 +33,50 @@ export default class App extends Component<IProps, IState> {
     public handleAddingPlayer(): void {
         const players = this.state.players;
         const index = this.state.index;
-
         const player = {name: this.state.name, lives: 3, id: index};
+
         this.setState({players: [...players, player], index: index + 1, name: ''});
     };
 
     public removePlayer(event, id): void {
-        const data = this.state.players.filter(player => player.id !== id);
+        const newPlayer = this.state.players.filter(player => player.id !== id);
+        this.setState({players: newPlayer})
+    }
 
-        this.setState({players: data})
+    public addLife(event, id): void {
+        const newState = Object.assign([], this.state.players);
+
+        const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
+
+        const player = newState[indexOfPlayer];
+
+        player.lives = player.lives + 1;
+
+        this.setState({players: newState})
     }
 
     public removeLife(event, id): void {
-        const player = this.state.players[id];
+        const newState = Object.assign([], this.state.players);
+        const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
+        const player = newState[indexOfPlayer];
+
         player.lives = player.lives - 1;
-        this.setState({players: {
-                ...this.state.players,
-                [this.state.players[id]]: {...player}
-    }
-    })
+
+        this.setState({players: newState})
     }
 
-    public showAllPlayers(player) {
+    public getPlayer(player) {
         return <ScrollView key={player.id}>
-            <View style={{ flexDirection: 'row', alignContent: 'center', justifyContent: 'center', paddingBottom: 6, flex: 1}}>
-                <Text style={{fontSize: 16}}>{player.name}</Text>
-                <View style={ styles.row } />
-                <Text style={{fontSize: 16}}>{player.lives}</Text>
-                <View style={{ flex: 1, alignSelf: 'stretch' }} />
-                <Text onPress={(e) => {this.removeLife(e, player.id)}} style = {{ color: '#ff0300' }}>- life</Text>
-                <View style={ styles.row } />
-                <Text onPress={this.removePlayer} style = {{ color: '#70ff4a' }}>+ life</Text>
-                <View style={styles.row} />
-                <Text onPress={(e) => {this.removePlayer(e, player.id)}} style = {{ color: '#ffd552' }}>Remove player</Text>
+            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingBottom: 10}}>
+                <Text style={{fontSize: 16, fontWeight: 'bold', margin: 5, color: '#EEF5DB', flexGrow: 1, flexShrink: 0, flexBasis: '17%'}}>{player.name}</Text>
+
+                <Text style={{fontSize: 16, color: '#EEF5DB', flexGrow: 1, margin: 5, flexShrink: 0, flexBasis: '17%'}}>{player.lives}</Text>
+
+                <Text onPress={(e) => {this.removeLife(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>- life</Text>
+
+                <Text onPress={(e) => {this.addLife(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>+ life</Text>
+
+                <Text onPress={(e) => {this.removePlayer(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>Remove</Text>
             </View>
 
         </ScrollView>
@@ -74,14 +85,14 @@ export default class App extends Component<IProps, IState> {
     public render() {
         return (
             <View style={styles.container}>
-                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34}}>Blidworth Killer</Text>
+                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34, color: '#EEF5DB'}}>Pool App</Text>
                 <TextInput onChangeText={(e) => this.getPlayersName(e)} value={this.state.name} placeholder={'Username'} style={styles.input}/>
 
                 <Text style={styles.button} onPress={this.handleAddingPlayer}>add player</Text>
-                <ScrollView style={{paddingTop: 10, alignSelf: 'stretch', alignContent: 'center', paddingRight: 5, paddingLeft: 5}}>
+                <ScrollView style={{display: 'flex', paddingTop: 20, alignSelf: 'stretch', alignContent: 'center', paddingRight: 5, paddingLeft: 5}}>
                     {
                         this.state.players.map(player => {
-                            return this.showAllPlayers(player);
+                            return this.getPlayer(player);
                         })
                     }
                 </ScrollView>
@@ -93,21 +104,34 @@ export default class App extends Component<IProps, IState> {
 const styles = StyleSheet.create({
     button: {
         alignContent:'center',
-        backgroundColor: 'black',
-        borderColor: 'white',
+        backgroundColor: '#4f6367',
+        borderColor: '#EEF5DB',
         borderRadius: 5,
         borderWidth: 1,
-        color: 'white',
+        color: '#EEF5DB',
         fontSize: 12,
         fontWeight: 'bold',
         overflow: 'hidden',
         padding: 8,
         textAlign:'center'
     },
+    buttonLives: {
+        alignContent:'center',
+        backgroundColor: '#4f6367',
+        borderColor: '#EEF5DB',
+        borderRadius: 3,
+        borderWidth: 1,
+        color: '#EEF5DB',
+        fontSize: 10,
+        overflow: 'hidden',
+        padding: 3,
+        textAlign:'center'
+    },
     container: {
         alignItems: 'center',
-        backgroundColor: '#ffffff',
-        paddingTop:55,
+        backgroundColor: '#fe5f55',
+        flex: 1,
+        paddingTop:55
     },
     heading: {
         alignItems: 'center',
@@ -115,12 +139,13 @@ const styles = StyleSheet.create({
         padding: 10
     },
     input: {
-        borderColor: 'black',
+        borderColor: '#EEF5DB',
         borderRadius: 5,
         borderWidth: 1,
+        color: '#EEF5DB',
         marginBottom: 10,
-        padding: 12,
-        width: 200,
+        padding: 15,
+        width: 200
     },
     row: {
         width: 40,
