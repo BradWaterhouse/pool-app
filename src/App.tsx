@@ -99,7 +99,7 @@ export default class App extends Component<IProps, IState> {
                         })
                     }
                 </ScrollView>
-                <Text style={styles.removeAllPlayersButton} onPress={this.removeAllPlayers}>remove all players</Text>
+                <Text style={styles.removeAllPlayersButton} onPress={this.removeAllPlayers}>New Game</Text>
             </View>
         );
     }
@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fe5f55',
         flex: 1,
+        paddingBottom: 40,
         paddingTop:55
     },
     heading: {
