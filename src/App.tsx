@@ -24,6 +24,7 @@ export default class App extends Component<IProps, IState> {
         this.getPlayersName = this.getPlayersName.bind(this);
         this.removePlayer = this.removePlayer.bind(this);
         this.removeLife = this.removeLife.bind(this);
+        this.removeAllPlayers = this.removeAllPlayers.bind(this);
     }
 
     public getPlayersName (name) {
