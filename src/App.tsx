@@ -99,7 +99,7 @@ export default class App extends Component<IProps, IState> {
                         })
                     }
                 </ScrollView>
-                <Text style={styles.removeAllPlayersButton} onPress={this.removeAllPlayers}>New Game</Text>
+                {this.state.players.length > 0 ?  <Text style={styles.removeAllPlayersButton} onPress={this.removeAllPlayers}>New Game</Text> : false}
             </View>
         );
     }

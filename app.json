@@ -4,6 +4,7 @@
     "slug": "killerpoolapp",
     "privacy": "public",
     "sdkVersion": "33.0.0",
+    "description": "Application built to keep track of scoring in the popular pool game killer",
     "platforms": [
       "ios",
       "android",
@@ -11,7 +12,7 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/favicon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
