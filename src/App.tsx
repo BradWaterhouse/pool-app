@@ -43,6 +43,10 @@ export default class App extends Component<IProps, IState> {
         this.setState({players: newPlayer})
     }
 
+    public removeAllPlayers(): void {
+        this.setState({players: []});
+    };
+
     public addLife(event, id): void {
         const newState = Object.assign([], this.state.players);
         const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
@@ -94,6 +98,7 @@ export default class App extends Component<IProps, IState> {
                         })
                     }
                 </ScrollView>
+                <Text style={styles.removeAllPlayersButton} onPress={this.removeAllPlayers}>remove all players</Text>
             </View>
         );
     }
@@ -144,6 +149,20 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         padding: 15,
         width: 200
+    },
+    removeAllPlayersButton: {
+        alignContent:'center',
+        backgroundColor: '#4f6367',
+        borderColor: '#EEF5DB',
+        borderRadius: 5,
+        borderWidth: 1,
+        color: '#EEF5DB',
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginTop: 12,
+        overflow: 'hidden',
+        padding: 8,
+        textAlign:'center'
     },
     row: {
         width: 40,
