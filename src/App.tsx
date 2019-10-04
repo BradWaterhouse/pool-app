@@ -78,8 +78,7 @@ export default class App extends Component<{}, IState> {
 
         newState.filter(val => val);
 
-        this.setState({ players: newState });
-        this.setState({activePlayer: this.state.players[0].id });
+        this.setState({ players: newState, activePlayer: newState[0].id });
     }
 
     public getPlayer(player) {
