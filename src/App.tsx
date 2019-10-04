@@ -3,6 +3,7 @@ import { Component } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 interface IState {
+    activePlayerIndex: number;
     players?: any[],
     name: string,
     index: number;
@@ -13,6 +14,7 @@ export default class App extends Component<{}, IState> {
         super(props);
 
         this.state = {
+            activePlayerIndex: 0,
             index: 0,
             name: '',
             players: []
@@ -40,11 +42,15 @@ export default class App extends Component<{}, IState> {
 
     public removePlayer(event, id): void {
         const newPlayer = this.state.players.filter(player => player.id !== id);
+        const indexOfNextPlayer = newPlayer.findIndex(selectedPlayer => selectedPlayer.id === id + 1);
+
+        this.setState({ activePlayerIndex: indexOfNextPlayer });
         this.setState({players: newPlayer})
     }
 
     public removeAllPlayers(): void {
         this.setState({players: []});
+        this.setState({activePlayerIndex: 0})
     };
 
     public addLife(event, id): void {
@@ -52,8 +58,15 @@ export default class App extends Component<{}, IState> {
         const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
         const player = newState[indexOfPlayer];
 
+        let indexOfNextPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id + 1);
+
+        if (indexOfNextPlayer === -1) {
+            indexOfNextPlayer = 0
+        }
+
         player.lives = player.lives + 1;
 
+        this.setState({ activePlayerIndex: indexOfNextPlayer });
         this.setState({players: newState})
     }
 
@@ -62,9 +75,16 @@ export default class App extends Component<{}, IState> {
         const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
         const player = newState[indexOfPlayer];
 
+        let indexOfNextPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id + 1);
+
+        if (indexOfNextPlayer === -1) {
+            indexOfNextPlayer = 0
+        }
+
         player.lives = player.lives - 1;
 
-        this.setState({players: newState})
+        this.setState({ activePlayerIndex: indexOfNextPlayer });
+        this.setState({ players: newState })
     }
 
     public sortPlayers(): void {
@@ -77,8 +97,11 @@ export default class App extends Component<{}, IState> {
     public getPlayer(player) {
         return <ScrollView key={player.id}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingBottom: 10}}>
+                {this.state.activePlayerIndex === player.id ?
+                <Text style={{fontSize: 16, fontWeight: 'bold', margin: 5, color: '#030603', flexGrow: 1, flexShrink: 0, flexBasis: '17%'}}>{player.name}</Text>
+                    :
                 <Text style={{fontSize: 16, fontWeight: 'bold', margin: 5, color: '#EEF5DB', flexGrow: 1, flexShrink: 0, flexBasis: '17%'}}>{player.name}</Text>
-
+                }
                 <Text style={{fontSize: 16, color: '#EEF5DB', flexGrow: 1, margin: 5, flexShrink: 0, flexBasis: '17%'}}>{player.lives}</Text>
 
                 <Text onPress={(e) => {this.removeLife(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>- life</Text>
@@ -104,6 +127,7 @@ export default class App extends Component<{}, IState> {
                             return this.getPlayer(player);
                         })
                     }
+                    <Text>{this.state.activePlayerIndex}</Text>
                 </ScrollView>
                 {this.state.players.length > 0 ?
                     <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
