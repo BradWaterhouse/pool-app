@@ -3,10 +3,13 @@ import { Component } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 interface IState {
-    activePlayerIndex: number;
-    players?: any[],
+    activePlayer: number;
+    players?: Array<{
+        id: number,
+        name: string,
+        lives: number
+    }>,
     name: string,
-    index: number;
 }
 
 export default class App extends Component<{}, IState> {
@@ -14,8 +17,7 @@ export default class App extends Component<{}, IState> {
         super(props);
 
         this.state = {
-            activePlayerIndex: 0,
-            index: 0,
+            activePlayer: 1,
             name: '',
             players: []
         };
@@ -34,23 +36,20 @@ export default class App extends Component<{}, IState> {
 
     public handleAddingPlayer(): void {
         const players = this.state.players;
-        const index = this.state.index;
-        const player = {name: this.state.name, lives: 3, id: index};
+        const nextId = (this.state.players[this.state.players.length - 1] || {id: 0}).id;
+        const player = {name: this.state.name, lives: 3, id: nextId + 1};
 
-        this.setState({players: [...players, player], index: index + 1, name: ''});
+        this.setState({players: [...players, player], name: ''});
     };
 
     public removePlayer(event, id): void {
-        const newPlayer = this.state.players.filter(player => player.id !== id);
-        const indexOfNextPlayer = newPlayer.findIndex(selectedPlayer => selectedPlayer.id === id + 1);
+        const newPlayers = this.state.players.filter(player => player.id !== id);
 
-        this.setState({ activePlayerIndex: indexOfNextPlayer });
-        this.setState({players: newPlayer})
+        this.setState({players: newPlayers, activePlayer: this.updateActivePlayer(id)});
     }
 
     public removeAllPlayers(): void {
-        this.setState({players: []});
-        this.setState({activePlayerIndex: 0})
+        this.setState({players: [], activePlayer: 1});
     };
 
     public addLife(event, id): void {
@@ -58,16 +57,9 @@ export default class App extends Component<{}, IState> {
         const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
         const player = newState[indexOfPlayer];
 
-        let indexOfNextPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id + 1);
-
-        if (indexOfNextPlayer === -1) {
-            indexOfNextPlayer = 0
-        }
-
         player.lives = player.lives + 1;
 
-        this.setState({ activePlayerIndex: indexOfNextPlayer });
-        this.setState({players: newState})
+        this.setState({players: newState, activePlayer: this.updateActivePlayer(id)})
     }
 
     public removeLife(event, id): void {
@@ -75,29 +67,25 @@ export default class App extends Component<{}, IState> {
         const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
         const player = newState[indexOfPlayer];
 
-        let indexOfNextPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id + 1);
-
-        if (indexOfNextPlayer === -1) {
-            indexOfNextPlayer = 0
-        }
-
         player.lives = player.lives - 1;
 
-        this.setState({ activePlayerIndex: indexOfNextPlayer });
-        this.setState({ players: newState })
+        this.setState({ players: newState, activePlayer: this.updateActivePlayer(id) })
     }
 
     public sortPlayers(): void {
         const newState = Object.assign([], this.state.players);
         newState.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.name > b.name) ? 1 : -1) : -1 );
 
-        this.setState({ players: newState })
+        newState.filter(val => val);
+
+        this.setState({ players: newState });
+        this.setState({activePlayer: this.state.players[0].id });
     }
 
     public getPlayer(player) {
         return <ScrollView key={player.id}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingBottom: 10}}>
-                {this.state.activePlayerIndex === player.id ?
+                {this.state.activePlayer === player.id ?
                 <Text style={{fontSize: 16, fontWeight: 'bold', margin: 5, color: '#030603', flexGrow: 1, flexShrink: 0, flexBasis: '17%'}}>{player.name}</Text>
                     :
                 <Text style={{fontSize: 16, fontWeight: 'bold', margin: 5, color: '#EEF5DB', flexGrow: 1, flexShrink: 0, flexBasis: '17%'}}>{player.name}</Text>
@@ -137,6 +125,19 @@ export default class App extends Component<{}, IState> {
                     : false}
             </View>
         );
+    }
+
+    private updateActivePlayer (id: number) {
+        let activePlayer = this.state.activePlayer;
+
+        const currentActivePlayerIndex = this.state.players.findIndex(p => p.id === id);
+        if (this.state.players[currentActivePlayerIndex + 1]) {
+            activePlayer = this.state.players[currentActivePlayerIndex + 1].id;
+        } else {
+            activePlayer = (this.state.players[0] || {id: 1}).id;
+        }
+
+        return activePlayer;
     }
 }
 
