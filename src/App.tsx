@@ -8,10 +8,8 @@ interface IState {
     index: number;
 }
 
-interface IProps {}
-
-export default class App extends Component<IProps, IState> {
-    constructor(props: IProps) {
+export default class App extends Component<{}, IState> {
+    constructor(props: {}) {
         super(props);
 
         this.state = {
@@ -25,6 +23,7 @@ export default class App extends Component<IProps, IState> {
         this.removePlayer = this.removePlayer.bind(this);
         this.removeLife = this.removeLife.bind(this);
         this.removeAllPlayers = this.removeAllPlayers.bind(this);
+        this.sortPlayers = this.sortPlayers.bind(this);
     }
 
     public getPlayersName (name) {
@@ -68,6 +67,13 @@ export default class App extends Component<IProps, IState> {
         this.setState({players: newState})
     }
 
+    public sortPlayers(): void {
+        const newState = Object.assign([], this.state.players);
+        newState.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.name > b.name) ? 1 : -1) : -1 );
+
+        this.setState({ players: newState })
+    }
+
     public getPlayer(player) {
         return <ScrollView key={player.id}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingBottom: 10}}>
@@ -99,13 +105,33 @@ export default class App extends Component<IProps, IState> {
                         })
                     }
                 </ScrollView>
-                {this.state.players.length > 0 ?  <Text style={styles.removeAllPlayersButton} onPress={this.removeAllPlayers}>New Game</Text> : false}
+                {this.state.players.length > 0 ?
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
+                        <Text style={styles.bottomButtons} onPress={this.removeAllPlayers}>New Game</Text>
+                        <Text style={styles.bottomButtons} onPress={this.sortPlayers}>Sort Players</Text>
+                    </View>
+                    : false}
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    bottomButtons: {
+        alignContent:'center',
+        backgroundColor: '#4f6367',
+        borderColor: '#EEF5DB',
+        borderRadius: 5,
+        borderWidth: 1,
+        color: '#EEF5DB',
+        fontSize: 12,
+        fontWeight: 'bold',
+        margin: 5,
+        marginTop: 12,
+        overflow: 'hidden',
+        padding: 8,
+        textAlign:'center'
+    },
     button: {
         alignContent:'center',
         backgroundColor: '#4f6367',
@@ -151,20 +177,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         padding: 15,
         width: 200
-    },
-    removeAllPlayersButton: {
-        alignContent:'center',
-        backgroundColor: '#4f6367',
-        borderColor: '#EEF5DB',
-        borderRadius: 5,
-        borderWidth: 1,
-        color: '#EEF5DB',
-        fontSize: 12,
-        fontWeight: 'bold',
-        marginTop: 12,
-        overflow: 'hidden',
-        padding: 8,
-        textAlign:'center'
     },
     row: {
         width: 40,
