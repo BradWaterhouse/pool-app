@@ -104,7 +104,7 @@ export default class App extends Component<{}, IState> {
     public render() {
         return (
             <View style={styles.container}>
-                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34, color: '#EEF5DB'}}>Killer</Text>
+                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34, color: '#EEF5DB'}}>Scoring</Text>
                 <TextInput onChangeText={(e) => this.getPlayersName(e)} value={this.state.name} placeholder={'Username'} style={styles.input}/>
 
                 <Text style={styles.button} onPress={this.handleAddingPlayer}>add player</Text>
@@ -114,8 +114,10 @@ export default class App extends Component<{}, IState> {
                             return this.getPlayer(player);
                         })
                     }
-                    <Text>{this.state.activePlayerIndex}</Text>
                 </ScrollView>
+                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
+                    <Text style={styles.bottomButtons} onPress={this.sortPlayers}>Recent results</Text>
+                </View>
                 {this.state.players.length > 0 ?
                     <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
                         <Text style={styles.bottomButtons} onPress={this.removeAllPlayers}>New Game</Text>
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
     },
     container: {
         alignItems: 'center',
-        backgroundColor: '#fe5f55',
+        backgroundColor: '#fe9cae',
         flex: 1,
         paddingBottom: 40,
         paddingTop:55
