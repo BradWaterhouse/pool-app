@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import {AsyncStorage} from 'react-native';
+import Modal from "react-native-modal";
 
 interface IState {
     activePlayer: number;
@@ -11,6 +12,8 @@ interface IState {
         lives: number
     }>,
     name: string,
+    modalVisible: boolean,
+    prevWinners: any[]
 }
 
 export default class App extends Component<{}, IState> {
@@ -19,8 +22,10 @@ export default class App extends Component<{}, IState> {
 
         this.state = {
             activePlayer: 1,
+            modalVisible: false,
             name: '',
-            players: []
+            players: [],
+            prevWinners: []
         };
 
         this.handleAddingPlayer = this.handleAddingPlayer.bind(this);
@@ -83,6 +88,10 @@ export default class App extends Component<{}, IState> {
 
     public showPreviousWinners(): void {
         this.retrieveData();
+
+        this.setState(prevState => ({
+            modalVisible: !prevState.modalVisible
+        }));
     }
 
     public findPlayer(id) {
@@ -104,7 +113,7 @@ export default class App extends Component<{}, IState> {
             const keys = await AsyncStorage.getAllKeys();
             const items = await AsyncStorage.multiGet(keys);
 
-            console.log(items);
+            this.setState({prevWinners: items})
         } catch (error) {
             console.log(error, "problemo")
         }
@@ -138,14 +147,28 @@ export default class App extends Component<{}, IState> {
                     : <Text onPress={(e) => {this.isWinner(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>Winner</Text>
                     }
             </View>
-
         </ScrollView>
     }
 
     public render() {
         return (
             <View style={styles.container}>
-                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34, color: '#EEF5DB'}}>Scoring</Text>
+                <View>
+                    <Modal isVisible={this.state.modalVisible} animationIn={"slideInDown"} animationOut={"slideInUp"} >
+                        <View style={{ }}>
+                            <Text style={{fontSize: 16, fontWeight: 'bold',alignItems: 'center', color: '#EEF5DB', marginBottom: 6}}>Previous winners</Text>
+                            {
+                                this.state.prevWinners.map(winners => {
+                                    return <View key={winners[0]}>
+                                            <Text style={{fontSize: 16, fontWeight: 'bold',alignItems: 'center', color: '#EEF5DB'}}>{winners[0]} - {winners[1]} </Text>
+                                    </View>
+                                })
+                            }
+                            <Text style={styles.bottomButtons} onPress={this.showPreviousWinners}>Hide</Text>
+                        </View>
+                    </Modal>
+                </View>
+                <Text style={{fontWeight: 'bold', paddingBottom: 20, fontSize: 34, color: '#EEF5DB'}}>Killer</Text>
                 <TextInput onChangeText={(e) => this.getPlayersName(e)} value={this.state.name} placeholder={'Username'} style={styles.input}/>
 
                 <Text style={styles.button} onPress={this.handleAddingPlayer}>add player</Text>
@@ -226,7 +249,7 @@ const styles = StyleSheet.create({
     },
     container: {
         alignItems: 'center',
-        backgroundColor: '#fe9cae',
+        backgroundColor: '#fead6b',
         flex: 1,
         paddingBottom: 40,
         paddingTop:55
