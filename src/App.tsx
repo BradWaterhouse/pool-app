@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {AsyncStorage} from 'react-native';
 
 interface IState {
     activePlayer: number;
@@ -28,6 +29,9 @@ export default class App extends Component<{}, IState> {
         this.removeLife = this.removeLife.bind(this);
         this.removeAllPlayers = this.removeAllPlayers.bind(this);
         this.sortPlayers = this.sortPlayers.bind(this);
+        this.storeData = this.storeData.bind(this);
+        this.retrieveData = this.retrieveData.bind(this);
+        this.showPreviousWinners = this.showPreviousWinners.bind(this);
     }
 
     public getPlayersName (name) {
@@ -54,8 +58,7 @@ export default class App extends Component<{}, IState> {
 
     public addLife(event, id): void {
         const newState = Object.assign([], this.state.players);
-        const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
-        const player = newState[indexOfPlayer];
+        const player = this.findPlayer(id);
 
         player.lives = player.lives + 1;
 
@@ -64,13 +67,48 @@ export default class App extends Component<{}, IState> {
 
     public removeLife(event, id): void {
         const newState = Object.assign([], this.state.players);
-        const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
-        const player = newState[indexOfPlayer];
+        const player = this.findPlayer(id);
 
         player.lives = player.lives - 1;
 
         this.setState({ players: newState, activePlayer: this.updateActivePlayer(id) })
     }
+
+    public isWinner(event, id): void {
+        const player = this.findPlayer(id);
+
+        this.removeAllPlayers();
+        this.storeData(player.name, '1');
+    }
+
+    public showPreviousWinners(): void {
+        this.retrieveData();
+    }
+
+    public findPlayer(id) {
+        const newState = Object.assign([], this.state.players);
+        const indexOfPlayer = newState.findIndex(selectedPlayer => selectedPlayer.id === id);
+        return newState[indexOfPlayer];
+    }
+
+    public storeData = async (key: string, value: string) => {
+        try {
+            await AsyncStorage.setItem(key, value);
+        } catch (error) {
+            // Error saving data
+        }
+    };
+
+    public retrieveData = async () => {
+        try {
+            const keys = await AsyncStorage.getAllKeys();
+            const items = await AsyncStorage.multiGet(keys);
+
+            console.log(items);
+        } catch (error) {
+            console.log(error, "problemo")
+        }
+    };
 
     public sortPlayers(): void {
         const newState = Object.assign([], this.state.players);
@@ -95,7 +133,10 @@ export default class App extends Component<{}, IState> {
 
                 <Text onPress={(e) => {this.addLife(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>+ life</Text>
 
-                <Text onPress={(e) => {this.removePlayer(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>Remove</Text>
+                {this.state.players.length > 1 ?
+                    <Text onPress={(e) => {this.removePlayer(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>Remove</Text>
+                    : <Text onPress={(e) => {this.isWinner(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>Winner</Text>
+                    }
             </View>
 
         </ScrollView>
@@ -116,7 +157,7 @@ export default class App extends Component<{}, IState> {
                     }
                 </ScrollView>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
-                    <Text style={styles.bottomButtons} onPress={this.sortPlayers}>Recent results</Text>
+                    <Text style={styles.bottomButtons} onPress={this.showPreviousWinners}>Recent results</Text>
                 </View>
                 {this.state.players.length > 0 ?
                     <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
