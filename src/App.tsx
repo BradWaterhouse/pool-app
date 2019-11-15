@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Component } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import {AsyncStorage} from 'react-native';
+import {Component} from 'react';
+import {AsyncStorage, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import Modal from "react-native-modal";
 
 interface IState {
@@ -37,6 +36,10 @@ export default class App extends Component<{}, IState> {
         this.storeData = this.storeData.bind(this);
         this.retrieveData = this.retrieveData.bind(this);
         this.showPreviousWinners = this.showPreviousWinners.bind(this);
+    }
+
+    public componentDidMount(): Promise<void> {
+        return this.retrieveData();
     }
 
     public getPlayersName (name) {
@@ -79,11 +82,11 @@ export default class App extends Component<{}, IState> {
         this.setState({ players: newState, activePlayer: this.updateActivePlayer(id) })
     }
 
-    public isWinner(event, id): void {
+    public isWinner(event, id): Promise<void> {
         const player = this.findPlayer(id);
 
         this.removeAllPlayers();
-        this.storeData(player.name, '1');
+        return this.storeData(player.name, '1');
     }
 
     public showPreviousWinners(): void {
@@ -102,18 +105,18 @@ export default class App extends Component<{}, IState> {
 
     public storeData = async (key: string, value: string) => {
         try {
-            await AsyncStorage.setItem(key, value);
+            if (key && value) {
+                await AsyncStorage.setItem(key, value);
+            }
         } catch (error) {
-            // Error saving data
+            console.log(error, "problemo")
         }
     };
 
     public retrieveData = async () => {
         try {
             const keys = await AsyncStorage.getAllKeys();
-            const items = await AsyncStorage.multiGet(keys);
-
-            this.setState({prevWinners: items})
+            this.setState({prevWinners: await AsyncStorage.multiGet(keys)})
         } catch (error) {
             console.log(error, "problemo")
         }
@@ -155,16 +158,16 @@ export default class App extends Component<{}, IState> {
             <View style={styles.container}>
                 <View>
                     <Modal isVisible={this.state.modalVisible} animationIn={"slideInDown"} animationOut={"slideInUp"} >
-                        <View style={{ }}>
+                        <View style={{ alignItems: 'center' }}>
                             <Text style={{fontSize: 16, fontWeight: 'bold',alignItems: 'center', color: '#EEF5DB', marginBottom: 6}}>Previous winners</Text>
                             {
                                 this.state.prevWinners.map(winners => {
                                     return <View key={winners[0]}>
-                                            <Text style={{fontSize: 16, fontWeight: 'bold',alignItems: 'center', color: '#EEF5DB'}}>{winners[0]} - {winners[1]} </Text>
+                                            <Text style={{fontSize: 16, fontWeight: 'bold',alignItems: 'center', color: '#EEF5DB'}}>{winners[0]} </Text>
                                     </View>
                                 })
                             }
-                            <Text style={styles.bottomButtons} onPress={this.showPreviousWinners}>Hide</Text>
+                            <Text style={styles.bottomButtons} onPress={this.showPreviousWinners}>Hide previous winners</Text>
                         </View>
                     </Modal>
                 </View>
@@ -249,7 +252,7 @@ const styles = StyleSheet.create({
     },
     container: {
         alignItems: 'center',
-        backgroundColor: '#fead6b',
+        backgroundColor: 'rgba(254,173,123,0.98)',
         flex: 1,
         paddingBottom: 40,
         paddingTop:55
@@ -263,7 +266,7 @@ const styles = StyleSheet.create({
         borderColor: '#EEF5DB',
         borderRadius: 5,
         borderWidth: 1,
-        color: '#EEF5DB',
+        color: '#fcfaff',
         marginBottom: 10,
         padding: 15,
         width: 200

@@ -18,7 +18,7 @@ describe("App", () => {
 
     describe("sets state", (): void => {
         it("should set the state", () => {
-            wrapper.setState({id: 1, name: 'lol', lives: 3})
+            wrapper.setState({id: 1, name: 'lol', lives: 3});
             expect(wrapper.find("TextInput")).toHaveLength(1);
         });
     });
