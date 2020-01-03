@@ -4,7 +4,6 @@ import {AsyncStorage, ScrollView, StyleSheet, Text, TextInput, View} from 'react
 import Modal from "react-native-modal";
 
 interface IState {
-    activePlayer: number;
     players?: Array<{
         id: number,
         name: string,
@@ -20,7 +19,6 @@ export default class App extends Component<{}, IState> {
         super(props);
 
         this.state = {
-            activePlayer: 1,
             modalVisible: false,
             name: '',
             players: [],
@@ -57,11 +55,11 @@ export default class App extends Component<{}, IState> {
     public removePlayer(event, id): void {
         const newPlayers = this.state.players.filter(player => player.id !== id);
 
-        this.setState({players: newPlayers, activePlayer: this.updateActivePlayer(id)});
+        this.setState({players: newPlayers});
     }
 
     public removeAllPlayers(): void {
-        this.setState({players: [], activePlayer: 1});
+        this.setState({players: []});
     };
 
     public addLife(event, id): void {
@@ -70,7 +68,7 @@ export default class App extends Component<{}, IState> {
 
         player.lives = player.lives + 1;
 
-        this.setState({players: newState, activePlayer: this.updateActivePlayer(id)})
+        this.setState({ players: newState })
     }
 
     public removeLife(event, id): void {
@@ -79,7 +77,7 @@ export default class App extends Component<{}, IState> {
 
         player.lives = player.lives - 1;
 
-        this.setState({ players: newState, activePlayer: this.updateActivePlayer(id) })
+        this.setState({ players: newState })
     }
 
     public isWinner(event, id): Promise<void> {
@@ -128,21 +126,17 @@ export default class App extends Component<{}, IState> {
 
         newState.filter(val => val);
 
-        this.setState({ players: newState, activePlayer: newState[0].id });
+        this.setState({ players: newState });
     }
 
     public getPlayer(player) {
         return <ScrollView key={player.id}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingBottom: 10}}>
-                {this.state.activePlayer === player.id ?
-                <Text style={{fontSize: 16, fontWeight: 'bold', margin: 5, color: '#030603', flexGrow: 1, flexShrink: 0, flexBasis: '17%'}}>{player.name}</Text>
-                    :
+
                 <Text style={{fontSize: 16, fontWeight: 'bold', margin: 5, color: '#EEF5DB', flexGrow: 1, flexShrink: 0, flexBasis: '17%'}}>{player.name}</Text>
-                }
                 <Text style={{fontSize: 16, color: '#EEF5DB', flexGrow: 1, margin: 5, flexShrink: 0, flexBasis: '17%'}}>{player.lives}</Text>
 
                 <Text onPress={(e) => {this.removeLife(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>- life</Text>
-
                 <Text onPress={(e) => {this.addLife(e, player.id)}} style = {[styles.buttonLives, {margin: 5, flexGrow: 1, flexShrink: 0, flexBasis: '17%'}]}>+ life</Text>
 
                 {this.state.players.length > 1 ?
@@ -193,19 +187,6 @@ export default class App extends Component<{}, IState> {
                     : false}
             </View>
         );
-    }
-
-    private updateActivePlayer (id: number) {
-        let activePlayer = this.state.activePlayer;
-
-        const currentActivePlayerIndex = this.state.players.findIndex(p => p.id === id);
-        if (this.state.players[currentActivePlayerIndex + 1]) {
-            activePlayer = this.state.players[currentActivePlayerIndex + 1].id;
-        } else {
-            activePlayer = (this.state.players[0] || {id: 1}).id;
-        }
-
-        return activePlayer;
     }
 }
 
